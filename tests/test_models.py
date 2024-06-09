@@ -36,5 +36,11 @@ class TestModels(unittest.TestCase):
     def test_magazine_create_table(self):
         Magazine.create_table()
 
+    def test_article_drop_table(self):
+        Article.drop_table()
+
+    def test_article_create_table(self):
+        Article.create_table()
+
 if __name__ == "__main__":
     unittest.main()
