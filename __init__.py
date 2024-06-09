@@ -3,7 +3,7 @@ from models.author import Author
 Author.drop_table()
 Author.create_table()
 
-new_author= Author.create('Joe Doe')
+new_author= Author.create('John Doe')
 print("Author ID:", new_author.id)
 print("Author Name:", new_author.name)
 

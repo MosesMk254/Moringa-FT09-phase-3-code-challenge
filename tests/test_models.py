@@ -16,5 +16,19 @@ class TestModels(unittest.TestCase):
         magazine = Magazine(1, "Tech Weekly", "Technology")
         self.assertEqual(magazine.name, "Tech Weekly")
 
+    def test_author_drop_table(self):
+        Author.drop_table()
+    
+    def test_author_create_table(self):
+        Author.create_table()
+
+    def test_create_author_invalid_name(self):
+        with self.assertRaises(ValueError):
+            Author.create('')
+
+    def test_create_author_invalid_id(self):
+        with self.assertRaises(ValueError):
+            Author('John Doe', id='invalid_id')
+
 if __name__ == "__main__":
     unittest.main()
