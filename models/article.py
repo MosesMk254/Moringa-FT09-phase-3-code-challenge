@@ -73,7 +73,46 @@ class Article:
     def content(self, value):
         if not isinstance(value, str):
             raise ValueError("Content must be a string")
-        if hasattr(self, '_name'):
+        if hasattr(self, '_content'):
             raise AttributeError("Article cannot be changed after instantiation")
         self._content = value
 
+    def author(self):
+        from models.author import Author
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT authors.*
+            FROM articles
+            JOIN authors ON articles.author_id = authors.id
+            WHERE articles.id = ?
+        """
+        cursor.execute(sql, (self.id,))
+        author_row = cursor.fetchone()
+
+        if author_row:
+            author = Author(name=author_row['name'], id=author_row['id'])
+            return author
+        else:
+            return None
+
+    def magazine(self):
+        from models.magazine import Magazine
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT magazines.*
+            FROM articles
+            JOIN magazines ON articles.magazine_id = magazines.id
+            WHERE articles.id = ?
+        """
+        cursor.execute(sql, (self.id,))
+        magazine_row = cursor.fetchone()
+
+        if magazine_row:
+            magazine = Magazine(name=magazine_row['name'], category=magazine_row['category'], id=magazine_row['id'])
+            return magazine
+        else:
+            return None

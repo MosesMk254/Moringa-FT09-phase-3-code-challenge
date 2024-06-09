@@ -59,7 +59,7 @@ class Magazine:
     def name(self, value):
         if not isinstance(value, str):
             raise ValueError("Name must be a string")
-        if len(value) <= 2 and len(value) >= 16:
+        if not  (2 <= len(value) <= 16):
             raise ValueError("Name must be between 2 and 16 characters")
         self._name = value
 
@@ -74,3 +74,38 @@ class Magazine:
         if len(value) == 0:
             raise ValueError("Category must be longer than 0 characters")
         self._category = value
+
+    def articles(self):
+        from models.article import Article 
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT articles.*
+            FROM articles
+            JOIN magazines ON articles.magazine_id = magazines.id
+            WHERE magazines.id = ?
+        """
+        cursor.execute(sql, (self.id,))
+        article_rows = cursor.fetchall()
+
+        articles = [Article(*row) for row in article_rows]
+        return articles
+
+    def contributors(self):
+        from models.author import Author
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT authors.*
+            FROM articles
+            JOIN authors ON articles.author_id = authors.id
+            JOIN magazines ON articles.magazine_id = magazines.id
+            WHERE magazines.id = ?
+        """
+        cursor.execute(sql, (self.id,))
+        contributor_rows = cursor.fetchall()
+
+        contributors = [Author(*row) for row in contributor_rows]
+        return contributors

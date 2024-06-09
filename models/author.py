@@ -65,6 +65,41 @@ class Author:
             raise AttributeError("Name cannot be changed after instantiation")
         self._name = value
 
+    def articles(self):
+        from models.article import Article
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT articles.*
+            FROM articles
+            JOIN authors ON articles.author_id = authors.id
+            WHERE authors.id = ?
+        """
+        cursor.execute(sql, (self.id,))
+        article_rows = cursor.fetchall()
+
+        articles = [Article(*row) for row in article_rows]
+        return articles
+
+    def magazines(self):
+        from models.magazine import Magazine
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        sql = """
+            SELECT magazines.*
+            FROM articles
+            JOIN magazines ON articles.magazine_id = magazines.id
+            JOIN authors ON articles.author_id = authors.id
+            WHERE authors.id = ?
+        """
+        cursor.execute(sql, (self.id,))
+        magazine_rows = cursor.fetchall()
+
+        magazines = [Magazine(*row) for row in magazine_rows]
+        return magazines
+
 
     
 
